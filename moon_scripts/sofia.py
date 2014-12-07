@@ -18,7 +18,7 @@ def process_sofia(input, output):
                     pass
     with open(output, 'wb') as file:
         writer = csv.writer(file)
-        for key in sorted(result):
+        for key in sorted(result, reverse=True):
             writer.writerow([key] + result[key])
 
 if __name__ == '__main__':
