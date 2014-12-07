@@ -7,6 +7,7 @@ import datetime
 import requests
 import urlparse
 import dateutil.parser
+from moon_scripts.merger import load_all_data
 
 
 API_URL = 'http://wefeel.csiro.au/api/'
@@ -31,14 +32,30 @@ def load_data():
 
 
 def write_csv(data):
+    all_data = load_all_data()
+    feature_keys = all_data.values()[0].keys()
+
+    def format_features(d):
+        r = []
+        for k in feature_keys:
+            if k in d:
+                r.append(d[k])
+            else:
+                r.append('-')
+
+        return r
+
     emotions = ['love', 'joy', 'sadness', 'other', 'anger', 'surprise',
                 'fear', '*']
     with open('eastern.csv', 'w') as f:
         writer = csv.writer(f)
-        writer.writerow(['date'] + emotions)
+        writer.writerow(['date'] + emotions + feature_keys)
         for d in data:
-            writer.writerow([reformat_time(d['localStart']['start'])] +
-                            [d['counts'][e] for e in emotions])
+            fd = reformat_time(d['localStart']['start'])
+            fs = all_data[fd] if fd in all_data else {}
+            fs = format_features(fs)
+            writer.writerow([fd] +
+                            [d['counts'][e] for e in emotions] + fs)
 
 
 if __name__ == '__main__':

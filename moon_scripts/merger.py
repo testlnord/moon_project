@@ -12,7 +12,7 @@ def load_all_data():
         fd = cd.strftime("%Y-%m-%d")
         result.setdefault(fd, {})
         result[fd]['moon_time'] = t
-        result[fd]['moon_day'] = d
+        result[fd]['moon_day'] = m[:-1]
 
     moon_phase = csv.reader(open("../moon_data/moon_phase.csv"))
 
