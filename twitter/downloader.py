@@ -1,17 +1,14 @@
-#! /usr/bin/env python2
-
 import csv
-import json
 import time
 import datetime
 import requests
-import urlparse
+import urllib.parse
 import dateutil.parser
 from moon_scripts.merger import load_all_data
 
 
 API_URL = 'http://wefeel.csiro.au/api/'
-TIMEPOINTS_URL = urlparse.urljoin(API_URL, 'emotions/primary/timepoints')
+TIMEPOINTS_URL = urllib.parse.urljoin(API_URL, 'emotions/primary/timepoints')
 
 
 def get_unix_time(y, m, d):
