@@ -30,7 +30,7 @@ def load_data():
 
 def write_csv(data):
     all_data = load_all_data()
-    feature_keys = all_data.values()[0].keys()
+    feature_keys = list(all_data.values())[0].keys()
 
     def format_features(d):
         r = []
@@ -46,7 +46,7 @@ def write_csv(data):
                 'fear', '*']
     with open('eastern.csv', 'w') as f:
         writer = csv.writer(f)
-        writer.writerow(['date'] + emotions + feature_keys)
+        writer.writerow(['date'] + emotions + list(feature_keys))
         for d in data:
             fd = reformat_time(d['localStart']['start'])
             fs = all_data[fd] if fd in all_data else {}
