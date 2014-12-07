@@ -29,4 +29,16 @@ def load_all_data():
        for x, y in v.items():
            result[d][x] = y
 
+    all_keys = set()
+
+    for r in result.values():
+        for k in r.keys():
+            all_keys.add(k)
+
+    for r in result.values():
+        for k in all_keys:
+            r.setdefault(k, '-')
+
+
     return result
+
