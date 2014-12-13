@@ -1,6 +1,7 @@
 import csv
 import datetime
 from moon_scripts.solar_data import load_solar_data
+from moon_scripts.noaa_parser import load_noaa_data
 
 def load_all_data():
     moon_data = csv.reader(open("../moon_data/ny_moon_dates.csv"))
@@ -8,6 +9,7 @@ def load_all_data():
     result = dict()
     for d, m in moon_data:
         cd = datetime.datetime.strptime(d, "%Y %b %d  %H:%M")
+        cd += datetime.timedelta(hours=12)
         t = cd.strftime("%H:%M")
         fd = cd.strftime("%Y-%m-%d")
         result.setdefault(fd, {})
@@ -28,6 +30,12 @@ def load_all_data():
        result.setdefault(d, {})
        for x, y in v.items():
            result[d][x] = y
+
+    q = load_noaa_data()
+    for d,v in q.items():
+        result.setdefault(d, {})
+        for x, y in v.items():
+            result[d][x] = y
 
     all_keys = set()
 
