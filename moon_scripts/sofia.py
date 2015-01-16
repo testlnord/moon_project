@@ -24,7 +24,7 @@ def process_sofia(input, output):
 
 def load_data_as_dict(inp_path="../data/sofiaDTP.csv"):
     result = dict()
-    with open(input, 'rb') as file:
+    with open(inp_path, 'rb') as file:
         reader = list(csv.reader(file, delimiter=','))[1:]
         for row in reader:
             prev = [0] * 10
@@ -38,6 +38,8 @@ def load_data_as_dict(inp_path="../data/sofiaDTP.csv"):
                     result[row[0]] = result[row[0]][0] + result[row[0]][1]
                 except ValueError:
                     pass
+    return result
 
 if __name__ == '__main__':
-    process_sofia("../data/sofiaDTP.csv", "../data/sofia.csv")
+    #process_sofia("../data/sofiaDTP.csv", "../data/sofia.csv")
+    print(load_data_as_dict())
