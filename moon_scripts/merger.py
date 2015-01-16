@@ -14,7 +14,7 @@ def load_all_data():
         t = cd.strftime("%H:%M")
         fd = cd.strftime("%Y-%m-%d")
         result.setdefault(fd, {})
-        result[fd]['moon_time'] = t
+        #result[fd]['moon_time'] = t
         result[fd]['moon_day'] = m[:-1]
 
     moon_phase = csv.reader(open("../moon_data/moon_phase.csv"))
@@ -24,7 +24,7 @@ def load_all_data():
         fd = cd.strftime("%Y-%m-%d")
         result.setdefault(fd, {})
         result[fd]['phase'] = x
-        result[fd]['t'] = y
+        #result[fd]['t'] = y
 
     #q = load_solar_data()
     #for d,v in q.items():
@@ -46,7 +46,10 @@ def load_all_data():
 
     for r in result.values():
         for k in all_keys:
-            r.setdefault(k, '-')
+            if k == 'phase':
+                r.setdefault(k, 'O')
+            else:
+                r.setdefault(k, '-')
 
 
     return result
@@ -69,7 +72,6 @@ def print_csv(data, filename):
         dates = sorted(data.keys())
         names = [""] + ["date"] +  (data.values()[0]).keys()
         names = map(lambda x: "%s" % (str(x),), names)
-        print(names)
         writer.writerow(list(names))
         counter = 0
         for date in dates:
