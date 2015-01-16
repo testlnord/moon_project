@@ -1,5 +1,6 @@
 import csv
 import datetime
+from moon_scripts.sofia import load_data_as_dict
 from moon_scripts.solar_data import load_solar_data
 from moon_scripts.noaa_parser import load_noaa_data
 
@@ -25,11 +26,11 @@ def load_all_data():
         result[fd]['phase'] = x
         result[fd]['t'] = y
 
-    q = load_solar_data()
-    for d,v in q.items():
-       result.setdefault(d, {})
-       for x, y in v.items():
-           result[d][x] = y
+    #q = load_solar_data()
+    #for d,v in q.items():
+    #   result.setdefault(d, {})
+    #   for x, y in v.items():
+    #       result[d][x] = y
 
     q = load_noaa_data()
     for d,v in q.items():
@@ -51,16 +52,28 @@ def load_all_data():
     return result
 
 
-data = load_all_data()
-r1 = 0
-r2 = 0
-for d in data.keys():
+def merge_with(estimated, name):
+    data = load_all_data()
+    result = dict()
+    for k in estimated.keys():
+        if k in data:
+            result[k] = data[k]
+            result[k][name] = estimated[k]
 
-    if d[0:3] == '200':
-        if data[d]['moon_day'] == '-':
-            r1 += 1
-        else:
-            r2 += 1
-        print(d, data[d]['moon_day'])
+    return result
 
-print(r1, r2)
+
+def print_csv(data, filename):
+    with open(filename, 'w') as file:
+        writer = csv.writer(file)
+        dates = sorted(data.keys())
+        names = [""] + ["date"] +  (data.values()[0]).keys()
+        names = map(lambda x: '"' + x + '"', names)
+        writer.writerow(list(names))
+        counter = 0
+        for date in dates:
+            counter += 1
+            writer.writerow([counter, date] + data[date].values())
+
+if __name__ == '__main__':
+    print_csv(merge_with(load_data_as_dict(), 'accidents'), '../data/accidents.csv')
