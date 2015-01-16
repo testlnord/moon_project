@@ -68,7 +68,8 @@ def print_csv(data, filename):
         writer = csv.writer(file)
         dates = sorted(data.keys())
         names = [""] + ["date"] +  (data.values()[0]).keys()
-        names = map(lambda x: '"' + x + '"', names)
+        names = map(lambda x: "%s" % (str(x),), names)
+        print(names)
         writer.writerow(list(names))
         counter = 0
         for date in dates:
