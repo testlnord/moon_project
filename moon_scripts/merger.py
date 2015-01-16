@@ -50,3 +50,17 @@ def load_all_data():
 
     return result
 
+
+data = load_all_data()
+r1 = 0
+r2 = 0
+for d in data.keys():
+
+    if d[0:3] == '200':
+        if data[d]['moon_day'] == '-':
+            r1 += 1
+        else:
+            r2 += 1
+        print(d, data[d]['moon_day'])
+
+print(r1, r2)
