@@ -3,6 +3,9 @@ import datetime
 from moon_scripts.sofia import load_data_as_dict
 from moon_scripts.solar_data import load_solar_data
 from moon_scripts.noaa_parser import load_noaa_data
+from moon_scripts.aviation import load_aviation_as_dict
+import os
+from itertools import dropwhile
 
 def load_all_data():
     moon_data = csv.reader(open("../moon_data/ny_moon_dates.csv"))
@@ -37,6 +40,23 @@ def load_all_data():
         result.setdefault(d, {})
         for x, y in v.items():
             result[d][x] = y
+
+    ## planets
+    for planet in os.listdir("../planets"):
+        with open("../planets/" + planet) as file:
+            for line in file:
+                if line.startswith('$$SOE'):
+                    break
+            reader = csv.reader(file)
+            for d in reader:
+                if (d[0].startswith('$$EOE')):
+                    break
+                splitted = d[0].split()
+                cd = datetime.datetime.strptime(splitted[0], "%Y-%b-%d")
+                fd = cd.strftime("%Y-%m-%d")
+                if fd in result:
+                    result[fd][planet[:-4]] = float(splitted[-1])
+
 
     all_keys = set()
 
@@ -80,3 +100,4 @@ def print_csv(data, filename):
 
 if __name__ == '__main__':
     print_csv(merge_with(load_data_as_dict(), 'accidents'), '../data/accidents.csv')
+    print_csv(merge_with(load_aviation_as_dict(), 'aviation'), '../data/AviationDates.csv')
