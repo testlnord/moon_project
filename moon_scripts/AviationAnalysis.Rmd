@@ -41,6 +41,7 @@ xyplot(aviation ~ radio_flux, data = df)
 ```{r}
 df$predict <- df$aviation >= median(df$aviation)
 sum(df$predict) / length(df$aviation)
+df$aviation <- NULL
 
 train.idx <- sample(seq_len(nrow(df)), size = 2/3 * nrow(df))
 df.train <- df[train.idx,]
@@ -65,7 +66,7 @@ summary(tn.lda)
 plot(tn.lda)
 ```
 
-Совсем не плохо! Посмотрим на ошибку на тест сете.
+Посмотрим на ошибку на тест сете.
 
 ```{r}
 table(actual = df.test$predict, predicted = predict(tn.lda$best.model, df.test)$class)
