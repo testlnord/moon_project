@@ -1,0 +1,72 @@
+
+Готовим данные
+```{r}
+#setwd("path/to/moon_project")
+df <- read.csv("data/AviationDates.csv")
+df <- df[-1,]
+df$date <- NULL
+df$X <- NULL
+df$phase <- NULL
+df <- df[df$mercury != '-',]
+df$mercury <- as.numeric(df$mercury)
+```
+
+Посмотрим на распределение количества катастроф
+
+```{r}
+library(lattice)
+densityplot(df$aviation)
+```
+
+Попробуем предсказать число катастроф с помощью простой модели
+
+```{r}
+library(e1071)
+library(MASS)
+l <- tune(lm, aviation ~ ., data = df)
+summary(l)
+```
+
+Результат никакой. Посмотрим, видна ли какая-нибудь зависимость между response и predictors.
+
+```{r}
+xyplot(aviation ~ mercury, data = df)
+xyplot(aviation ~ jupiter, data = df)
+xyplot(aviation ~ radio_flux, data = df)
+```
+
+Зависимость не прослеживается.
+Построить регрессию у нас не получилось, давайте попробуем хотя бы классифицировать на случаи, когда число катастроф больше среднего или меньше.
+
+```{r}
+df$predict <- df$aviation >= median(df$aviation)
+sum(df$predict) / length(df$aviation)
+
+train.idx <- sample(seq_len(nrow(df)), size = 2/3 * nrow(df))
+df.train <- df[train.idx,]
+df.test <- df[-train.idx,]
+```
+
+Поделили примерно пополам.
+Воспользуемся функцией pcalda из материала Rcourse.pdf.
+
+```{r}
+#setwd("path/to/moon_project")
+pcalda <- function(...) pcawrap(lda, ...)
+predict.pcalda <- function(...) predict(...)$class
+
+pr <- prcomp(df, scale = TRUE)
+biplot(pr)
+
+tn.lda <- tune(pcalda, predict ~ . - aviation, data = df.train,
+               ranges = list(ncomp = 1:10), predict.func = predict.pcalda,
+               tunecontrol = tune.control(cross = 37))
+summary(tn.lda)
+plot(tn.lda)
+```
+
+Совсем не плохо! Посмотрим на ошибку на тест сете.
+
+```{r}
+table(actual = df.test$predict, predicted = predict(tn.lda$best.model, df.test)$class)
+```
