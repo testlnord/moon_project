@@ -53,6 +53,7 @@ df.test <- df[-train.idx,]
 
 ```{r}
 #setwd("path/to/moon_project")
+source("moon_scripts/PCAfncs.R")
 pcalda <- function(...) pcawrap(lda, ...)
 predict.pcalda <- function(...) predict(...)$class
 
