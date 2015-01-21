@@ -1,7 +1,7 @@
 
 Готовим данные
 ```{r}
-#setwd("path/to/moon_project")
+#setwd("path/to/moon_project/")
 df <- read.csv("data/AviationDates.csv")
 df <- df[-1,]
 df$date <- NULL
@@ -52,7 +52,7 @@ df.test <- df[-train.idx,]
 Воспользуемся функцией pcalda из материала Rcourse.pdf.
 
 ```{r}
-#setwd("path/to/moon_project")
+#setwd("path/to/moon_project/")
 source("moon_scripts/PCAfncs.R")
 pcalda <- function(...) pcawrap(lda, ...)
 predict.pcalda <- function(...) predict(...)$class
@@ -60,7 +60,7 @@ predict.pcalda <- function(...) predict(...)$class
 pr <- prcomp(df, scale = TRUE)
 biplot(pr)
 
-tn.lda <- tune(pcalda, predict ~ . - aviation, data = df.train,
+tn.lda <- tune(pcalda, predict ~ ., data = df.train,
                ranges = list(ncomp = 1:10), predict.func = predict.pcalda,
                tunecontrol = tune.control(cross = 37))
 summary(tn.lda)
